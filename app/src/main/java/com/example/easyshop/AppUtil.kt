@@ -23,22 +23,27 @@ object AppUtil {
             .document(currentUser.uid)
 
         userDoc.get().addOnCompleteListener { task ->
-            if(task.isSuccessful){
-                @Suppress("UNCHECKED_CAST")
-                val rawCart = task.result?.get("cartItems") as? Map<String, Any> ?: emptyMap()
-                val currentQuantity = when (val value = rawCart[productId]) {
-                    is Number -> value.toLong()
-                    is String -> value.toLongOrNull() ?: 0L
-                    else -> 0L
-                }
-                val updatedQuantity = currentQuantity + 1
+            if (task.isSuccessful) {
+                val doc = task.result
+                var currentQuantity = 0L
 
+                val cartItemsObj = doc?.get("cartItems")
+                if (cartItemsObj is Map<*, *>) {
+                    val value = cartItemsObj[productId]
+                    currentQuantity = when (value) {
+                        is Number -> value.toLong()
+                        is String -> value.toLongOrNull() ?: 0L
+                        else -> 0L
+                    }
+                }
+
+                val updatedQuantity = currentQuantity + 1
                 val updatedCart = mapOf("cartItems.$productId" to updatedQuantity)
 
                 userDoc.set(updatedCart, SetOptions.merge()).addOnCompleteListener { updateTask ->
-                    if(updateTask.isSuccessful){
+                    if (updateTask.isSuccessful) {
                         showToast(context, "Item added to cart")
-                    }else{
+                    } else {
                         showToast(context, "Failed to add item to cart")
                     }
                 }
