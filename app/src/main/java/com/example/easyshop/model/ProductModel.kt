@@ -1,9 +1,6 @@
 package com.example.easyshop.model
 
-import com.google.firebase.firestore.DocumentId
-
 data class ProductModel(
-    @DocumentId
     val id: String = "",
     val title: String = "",
     val name: String = "",
