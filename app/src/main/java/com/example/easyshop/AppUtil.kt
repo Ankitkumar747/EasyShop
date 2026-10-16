@@ -12,7 +12,7 @@ object AppUtil {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun addItemToCart(context:Context, productId : String){
+    fun addItemToCart(context: Context, productId : String){
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
             showToast(context, "User not logged in")
@@ -22,17 +22,21 @@ object AppUtil {
         val userDoc = Firebase.firestore.collection("users")
             .document(currentUser.uid)
 
-        userDoc.get().addOnCompleteListener {
-            if(it.isSuccessful){
+        userDoc.get().addOnCompleteListener { task ->
+            if(task.isSuccessful){
                 @Suppress("UNCHECKED_CAST")
-                val currentCart = it.result?.get("cartItems") as? Map<String, Long> ?: emptyMap()
-                val currentQuatity = currentCart[productId] ?: 0
-                val updatedQuantity = currentQuatity + 1
+                val rawCart = task.result?.get("cartItems") as? Map<String, Any> ?: emptyMap()
+                val currentQuantity = when (val value = rawCart[productId]) {
+                    is Number -> value.toLong()
+                    is String -> value.toLongOrNull() ?: 0L
+                    else -> 0L
+                }
+                val updatedQuantity = currentQuantity + 1
 
                 val updatedCart = mapOf("cartItems.$productId" to updatedQuantity)
 
-                userDoc.set(updatedCart, SetOptions.merge()).addOnCompleteListener { task ->
-                    if(task.isSuccessful){
+                userDoc.set(updatedCart, SetOptions.merge()).addOnCompleteListener { updateTask ->
+                    if(updateTask.isSuccessful){
                         showToast(context, "Item added to cart")
                     }else{
                         showToast(context, "Failed to add item to cart")
