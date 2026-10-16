@@ -25,22 +25,21 @@ object AppUtil {
         userDoc.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val doc = task.result
-                var currentQuantity = 0L
+                
+                @Suppress("UNCHECKED_CAST")
+                val existingCart = doc?.get("cartItems") as? Map<String, Any> ?: emptyMap()
+                val mutableCart = existingCart.toMutableMap()
 
-                val cartItemsObj = doc?.get("cartItems")
-                if (cartItemsObj is Map<*, *>) {
-                    val value = cartItemsObj[productId]
-                    currentQuantity = when (value) {
-                        is Number -> value.toLong()
-                        is String -> value.toLongOrNull() ?: 0L
-                        else -> 0L
-                    }
+                val currentQuantity = when (val value = mutableCart[productId]) {
+                    is Number -> value.toLong()
+                    is String -> value.toLongOrNull() ?: 0L
+                    else -> 0L
                 }
 
                 val updatedQuantity = currentQuantity + 1
-                val updatedCart = mapOf("cartItems.$productId" to updatedQuantity)
+                mutableCart[productId] = updatedQuantity
 
-                userDoc.set(updatedCart, SetOptions.merge()).addOnCompleteListener { updateTask ->
+                userDoc.set(mapOf("cartItems" to mutableCart), SetOptions.merge()).addOnCompleteListener { updateTask ->
                     if (updateTask.isSuccessful) {
                         showToast(context, "Item added to cart")
                     } else {
