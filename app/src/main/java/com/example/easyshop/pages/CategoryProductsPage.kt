@@ -27,7 +27,7 @@ fun CategoryProductsPage(modifier: Modifier = Modifier, categoryId: String?) {
             .whereEqualTo("category", categoryId).get().addOnCompleteListener() {
                 if (it.isSuccessful) {
                     val resultList = it.result.documents.mapNotNull { doc ->
-                        doc.toObject(ProductModel::class.java)
+                        doc.toObject(ProductModel::class.java)?.copy(id = doc.id)
                     }
                     productsList.value = resultList
                 }

@@ -56,11 +56,12 @@ fun ProductDetailsView(modifier: Modifier = Modifier, productId: String) {
         Firebase.firestore.collection("data")
             .document("stock").collection("products")
             .document(productId).get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result?.toObject(ProductModel::class.java)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val doc = task.result
+                    val result = doc?.toObject(ProductModel::class.java)
                     if (result != null) {
-                        product = result
+                        product = result.copy(id = doc.id.ifEmpty { productId })
                     }
                 }
             }
