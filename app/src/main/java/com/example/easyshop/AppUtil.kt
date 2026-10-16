@@ -1,7 +1,7 @@
 package com.example.easyshop
 
-import android.content.Context
 import android.widget.Toast
+import android.content.Context
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
@@ -12,7 +12,7 @@ object AppUtil {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun addItemToCart(context: Context, productId: String){
+    fun addItemToCart(context:Context, productId : String){
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
             showToast(context, "User not logged in")
@@ -22,33 +22,20 @@ object AppUtil {
         val userDoc = Firebase.firestore.collection("users")
             .document(currentUser.uid)
 
-        userDoc.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val docSnapshot = task.result
-                val currentCart = if (docSnapshot != null && docSnapshot.exists()) {
-                    @Suppress("UNCHECKED_CAST")
-                    docSnapshot.get("cartItems") as? Map<String, Long> ?: emptyMap()
-                } else {
-                    emptyMap()
-                }
-
-                val currentQuantity = currentCart[productId] ?: 0
-                val updatedQuantity = currentQuantity + 1
+        userDoc.get().addOnCompleteListener {
+            if(it.isSuccessful){
+                @Suppress("UNCHECKED_CAST")
+                val currentCart = it.result?.get("cartItems") as? Map<String, Long> ?: emptyMap()
+                val currentQuatity = currentCart[productId] ?: 0
+                val updatedQuantity = currentQuatity + 1
 
                 val updatedCart = mapOf("cartItems.$productId" to updatedQuantity)
 
-                userDoc.update(updatedCart).addOnCompleteListener { updateTask ->
-                    if (updateTask.isSuccessful) {
+                userDoc.set(updatedCart, SetOptions.merge()).addOnCompleteListener { task ->
+                    if(task.isSuccessful){
                         showToast(context, "Item added to cart")
-                    } else {
-                        userDoc.set(mapOf("cartItems" to mapOf(productId to updatedQuantity)), SetOptions.merge())
-                            .addOnCompleteListener { setTasks ->
-                                if (setTasks.isSuccessful) {
-                                    showToast(context, "Item added to cart")
-                                } else {
-                                    showToast(context, "Failed to add item to cart")
-                                }
-                            }
+                    }else{
+                        showToast(context, "Failed to add item to cart")
                     }
                 }
             } else {
