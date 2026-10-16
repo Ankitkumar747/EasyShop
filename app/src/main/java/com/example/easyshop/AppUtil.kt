@@ -11,17 +11,13 @@ object AppUtil {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun addItemToCart(context: Context, productId: String) {
-        addToCart(context, productId)
-    }
-
     fun addToCart(context: Context, productId : String){
+
         val userDoc = Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)
 
         userDoc.get().addOnCompleteListener {
             if(it.isSuccessful){
-                @Suppress("UNCHECKED_CAST")
                 val currentCart = it.result.get("cartItems") as? Map<String, Long> ?: emptyMap()
                 val currentQuantity = currentCart[productId]?:0
                 val updatedQuantity = currentQuantity + 1

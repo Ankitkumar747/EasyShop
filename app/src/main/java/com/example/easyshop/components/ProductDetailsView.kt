@@ -155,7 +155,7 @@ fun ProductDetailsView(modifier: Modifier = Modifier, productId: String) {
 
         Button(
             onClick = {
-                AppUtil.addItemToCart(context, productId)
+                AppUtil.addToCart(context, productId)
             },
             modifier = Modifier
                 .fillMaxWidth()
