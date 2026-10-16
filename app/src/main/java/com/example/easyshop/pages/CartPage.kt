@@ -25,28 +25,27 @@ fun CartPage(modifier: Modifier = Modifier) {
 
     LaunchedEffect(key1 = true){
         val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser != null) {
-            Firebase.firestore.collection("users")
-                .document(currentUser.uid)
-                .get().addOnCompleteListener { task ->
-                    if(task.isSuccessful){
-                        val doc = task.result
-                        val result = doc?.toObject(UserModel::class.java)
-                        val name = result?.name?.takeIf { it.isNotBlank() }
-                            ?: currentUser.displayName
-                            ?: currentUser.email?.substringBefore("@")
-                            ?: ""
-                        val email = result?.email?.takeIf { it.isNotBlank() }
-                            ?: currentUser.email
-                            ?: ""
-                        val cartItems = result?.cartItems ?: emptyMap()
+        val uid = currentUser?.uid ?: ""
 
-                        userModel.value = UserModel(
-                            uid = currentUser.uid,
-                            name = name,
-                            email = email,
-                            cartItems = cartItems
-                        )
+        if (uid.isNotBlank()) {
+            Firebase.firestore.collection("users")
+                .document(uid)
+                .get().addOnCompleteListener {
+                    if(it.isSuccessful){
+                        val result = it.result?.toObject(UserModel::class.java)
+                        if(result != null){
+                            userModel.value = result.copy(
+                                uid = uid,
+                                name = result.name.ifEmpty { currentUser?.displayName ?: currentUser?.email?.substringBefore("@") ?: "" },
+                                email = result.email.ifEmpty { currentUser?.email ?: "" }
+                            )
+                        } else {
+                            userModel.value = UserModel(
+                                uid = uid,
+                                name = currentUser?.displayName ?: currentUser?.email?.substringBefore("@") ?: "",
+                                email = currentUser?.email ?: ""
+                            )
+                        }
                     }
                 }
         }
