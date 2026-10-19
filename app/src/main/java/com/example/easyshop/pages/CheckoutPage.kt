@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -20,7 +21,19 @@ import com.google.firebase.firestore.firestore
 fun CheckoutPage(modifier: Modifier = Modifier) {
     val userModel = remember { mutableStateOf(UserModel()) }
 
-    val productList = remember { mutableListOf(ProductModel()) }
+    val productList = remember { mutableStateListOf(ProductModel()) }
+
+    val subTotal = remember { mutableStateOf(0f)}
+
+    fun calculateAndAssign(){
+        subTotal.value = 0f
+        productList.forEach {
+            if(it.actualPrice.isNotEmpty()){
+                val qty = userModel.value.cartItems[it.id]?:0
+                subTotal.value += it.actualPrice.toFloat() * qty
+            }
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
         Firebase.firestore.collection("users")
@@ -39,6 +52,7 @@ fun CheckoutPage(modifier: Modifier = Modifier) {
                                     val resultProducts =
                                         task.result.toObjects(ProductModel::class.java)
                                     productList.addAll(resultProducts)
+                                    calculateAndAssign()
                                 }
                             }
                     }
@@ -49,6 +63,6 @@ fun CheckoutPage(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        Text(text = productList.toList().toString())
+        Text(text = subTotal.value.toString())
     }
 }
