@@ -62,4 +62,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation("com.tbuonomo:dotsindicator:5.1.1")
+    implementation("com.razorpay:checkout:1.6.41")
+
 }
