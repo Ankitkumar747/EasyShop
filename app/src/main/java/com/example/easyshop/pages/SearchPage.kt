@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,31 +73,19 @@ fun SearchPage(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = {
-                GlobalNavigation.navController.popBackStack()
-            }) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = {
-                    searchQuery = it
-                    searchProducts(it)
-                },
-                placeholder = { Text("Search products...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 8.dp)
-                    .focusRequester(focusRequester),
-                singleLine = true
-            )
-        }
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = {
+                searchQuery = it
+                searchProducts(it)
+            },
+            placeholder = { Text("Search products...") },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester),
+            singleLine = true
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
