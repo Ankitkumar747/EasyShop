@@ -4,6 +4,14 @@ EasyShop is a production-grade, feature-rich Android e-commerce application buil
 
 ---
 
+## 📱 App UI Preview
+
+| Home Screen |
+| :---: |
+| ![Home Screen](screenshots/home_screen.png) |
+
+---
+
 ## 🚀 Key Features
 
 - **🔐 Secure Authentication**: Firebase Auth-powered Login and Signup flows with persistent session handling.
