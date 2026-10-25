@@ -1,8 +1,13 @@
 package com.example.easyshop.pages
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +52,22 @@ fun OrdersPage(modifier: Modifier = Modifier) {
             )
         )
 
-        Text(text = ordersList.value.toString())
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Total orders: ${ordersList.value.size}")
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            items(ordersList.value) { order ->
+                Text(
+                    text = "Order ID: ${order.id}",
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    fontSize = 16.sp
+                )
+            }
+        }
     }
 }
