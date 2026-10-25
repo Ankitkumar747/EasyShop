@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.sp
+import com.example.easyshop.GlobalNavigation
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
@@ -79,7 +80,9 @@ fun HeaderView(modifier: Modifier = Modifier) {
             )
         }
 
-        IconButton(onClick = { }) {
+        IconButton(onClick = {
+            GlobalNavigation.navController.navigate("search")
+        }) {
             Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
         }
     }

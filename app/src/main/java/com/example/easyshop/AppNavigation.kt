@@ -10,6 +10,7 @@ import com.example.easyshop.pages.CategoryProductsPage
 import com.example.easyshop.pages.CheckoutPage
 import com.example.easyshop.pages.OrdersPage
 import com.example.easyshop.pages.ProductDetailsPage
+import com.example.easyshop.pages.SearchPage
 import com.example.easyshop.screen.AuthScreen
 import com.example.easyshop.screen.HomeScreen
 import com.example.easyshop.screen.LoginScreen
@@ -59,6 +60,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
         composable("orders") {
             OrdersPage(modifier)
+        }
+
+        composable("search") {
+            SearchPage(modifier)
         }
 
     }
