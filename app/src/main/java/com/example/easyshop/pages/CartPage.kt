@@ -2,13 +2,19 @@ package com.example.easyshop.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -20,9 +26,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.easyshop.AppUtil
 import com.example.easyshop.GlobalNavigation
 import com.example.easyshop.components.CartItemView
+import com.example.easyshop.model.ProductModel
 import com.example.easyshop.model.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -32,6 +38,7 @@ import com.google.firebase.firestore.firestore
 fun CartPage(modifier: Modifier = Modifier) {
 
     var userModel = remember { mutableStateOf(UserModel()) }
+    val productsMap = remember { mutableStateOf<Map<String, ProductModel>>(emptyMap()) }
 
     DisposableEffect(key1 = true) {
         val listener = Firebase.firestore.collection("users")
@@ -39,6 +46,19 @@ fun CartPage(modifier: Modifier = Modifier) {
                 val result = it?.toObject(UserModel::class.java)
                 if (result != null) {
                     userModel.value = result
+
+                    if (result.cartItems.isNotEmpty()) {
+                        Firebase.firestore.collection("data").document("stock")
+                            .collection("products")
+                            .whereIn("id", result.cartItems.keys.take(10).toList())
+                            .get().addOnSuccessListener { task ->
+                                val map = task.documents.associate { doc ->
+                                    val prod = doc.toObject(ProductModel::class.java)?.copy(id = doc.id)
+                                    doc.id to (prod ?: ProductModel())
+                                }
+                                productsMap.value = map
+                            }
+                    }
                 }
             }
         onDispose {
@@ -46,8 +66,14 @@ fun CartPage(modifier: Modifier = Modifier) {
         }
     }
 
+    val subtotal = userModel.value.cartItems.entries.sumOf { (id, qty) ->
+        val product = productsMap.value[id]
+        val price = product?.actualPrice?.toFloatOrNull() ?: 0f
+        (price * qty).toDouble()
+    }.toFloat()
+
     Column(
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
@@ -56,6 +82,8 @@ fun CartPage(modifier: Modifier = Modifier) {
                 fontSize = 24.sp, fontWeight = FontWeight.Bold
             )
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         if (userModel.value.cartItems.isNotEmpty()) {
             LazyColumn(
@@ -68,14 +96,38 @@ fun CartPage(modifier: Modifier = Modifier) {
                 }
             }
 
-            Button(
-                onClick = {
-                    GlobalNavigation.navController.navigate("checkout")
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Text(text = "Checkout", fontSize = 16.sp)
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = "Total Amount", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                        Text(text = "₹${subtotal.toInt()}", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Button(
+                        onClick = {
+                            GlobalNavigation.navController.navigate("checkout")
+                        }, modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(text = "Proceed to Checkout", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
             }
         } else {
             Column(
@@ -88,7 +140,5 @@ fun CartPage(modifier: Modifier = Modifier) {
                 )
             }
         }
-
-
     }
 }
