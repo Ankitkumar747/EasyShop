@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.easyshop.AppUtil
 import com.example.easyshop.model.OrderModel
 
 @Composable
@@ -25,7 +26,7 @@ fun OrderView(orderItem : OrderModel, modifier: Modifier = Modifier) {
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -39,7 +40,7 @@ fun OrderView(orderItem : OrderModel, modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                orderItem.date.toString(),
+                AppUtil.formatDate(orderItem.date),
                 fontSize = 14.sp
             )
 

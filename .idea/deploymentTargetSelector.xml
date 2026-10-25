@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="MainActivity">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-06-24T20:25:32.342807200Z">
+        <DropdownSelection timestamp="2026-10-25T04:28:12.285852500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Ankit\.android\avd\Resizable_Experimental.avd" />
+              <DeviceId pluginId="Default" identifier="serial=192.168.1.2:41085;connection=564e188a" />
             </handle>
           </Target>
         </DropdownSelection>

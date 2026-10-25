@@ -18,6 +18,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.easyshop.components.OrderView
 import com.example.easyshop.model.OrderModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -53,20 +54,14 @@ fun OrdersPage(modifier: Modifier = Modifier) {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Total orders: ${ordersList.value.size}")
-        Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            items(ordersList.value) { order ->
-                Text(
-                    text = "Order ID: ${order.id}",
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    fontSize = 16.sp
-                )
+            items(ordersList.value) {
+                OrderView(orderItem = it)
             }
         }
     }

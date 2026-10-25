@@ -50,7 +50,7 @@ fun ProfilePage(modifier: Modifier = Modifier) {
         mutableStateOf(userModel.value.address)
     }
 
-    var context = LocalContext.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         Firebase.firestore.collection("users")

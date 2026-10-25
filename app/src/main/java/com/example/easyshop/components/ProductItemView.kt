@@ -1,11 +1,11 @@
 package com.example.easyshop.components
 
-import android.widget.Space
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +35,7 @@ import com.example.easyshop.model.ProductModel
 fun ProductItemView(modifier: Modifier = Modifier, product: ProductModel) {
 
     var context = LocalContext.current
+
     Card(
         modifier = modifier.padding(8.dp)
             .clickable{
@@ -51,6 +51,9 @@ fun ProductItemView(modifier: Modifier = Modifier, product: ProductModel) {
             AsyncImage(
                 model = product.images.firstOrNull(),
                 contentDescription = product.title,
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
             )
             Text(
                 text = product.title,
@@ -66,24 +69,27 @@ fun ProductItemView(modifier: Modifier = Modifier, product: ProductModel) {
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "₹" + product.price,
-                    fontSize = 12.sp,
-                    style = TextStyle(textDecoration = TextDecoration.LineThrough)
-                )
+                Column(){
+                    Text(
+                        text = "₹" + product.price,
+                        fontSize = 11.sp,
+                        style = TextStyle(textDecoration = TextDecoration.LineThrough)
+                    )
 
-                Spacer(modifier = Modifier.padding(4.dp))
+                    Spacer(modifier = Modifier.padding(2.dp))
 
-                Text(
-                    text = "₹" + product.actualPrice,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                    Text(
+                        text = "₹" + product.actualPrice,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(
                     onClick = {
+                        AppUtil.addToCart(context, product.id)
                     }
                 ) {
                     Icon(
