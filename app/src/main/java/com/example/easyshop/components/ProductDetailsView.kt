@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -51,6 +52,10 @@ fun ProductDetailsView(modifier: Modifier = Modifier, productId: String) {
     }
 
     val context = LocalContext.current
+
+    var isFav = remember {
+        mutableStateOf(AppUtil.checkFavourite(context, productId))
+    }
 
     LaunchedEffect(key1 = productId) {
         Firebase.firestore.collection("data")
@@ -143,9 +148,13 @@ fun ProductDetailsView(modifier: Modifier = Modifier, productId: String) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                AppUtil.addOrRemoveFromFavourite(context, productId)
+                isFav.value = AppUtil.checkFavourite(context, productId)
+            }) {
                 Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
+                    imageVector = if(isFav.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    tint = if(isFav.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                     contentDescription = "Add to Favourite",
                 )
             }

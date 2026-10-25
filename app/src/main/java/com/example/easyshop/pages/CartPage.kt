@@ -84,7 +84,7 @@ fun CartPage(modifier: Modifier = Modifier) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Your cart is empty", fontSize = 32.sp
+                    text = "Your cart is empty", fontSize = 16.sp
                 )
             }
         }
