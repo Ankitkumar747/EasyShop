@@ -10,10 +10,6 @@ EasyShop is a production-grade, feature-rich Android e-commerce application buil
 | :---: | :---: | :---: |
 | ![Home Screen](screenshots/home_screen.png) | ![Search Page](screenshots/search_screen.png) | ![Category Products](screenshots/category_screen.png) |
 
-| Product Details | Cart Page | Profile Page |
-| :---: | :---: | :---: |
-| ![Product Details](screenshots/product_details_screen.png) | ![Cart Page](screenshots/cart_screen.png) | ![Profile Page](screenshots/profile_screen.png) |
-
 ---
 
 ## 🚀 Key Features
